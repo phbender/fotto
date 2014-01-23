@@ -1,0 +1,7 @@
+docutils
+Flask
+Flask-Script
+jsonschema
+Flask-Mongoengine
+Flask-Principal
+Flask-Login
