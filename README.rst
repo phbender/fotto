@@ -24,4 +24,17 @@ Fotto is different.
   view, it should no longer be considered private since nice URLs are predictable
   as well.
 
+Quickstart
+==========
 
+After cloning the repository, set up the working environment.
+
+  $ mkvirtualenv fotto
+  $ pip install -r requirements.txt
+  $ python fixtures.py /path/to/a/dummy_image.jpg
+
+  $ ./manage.py runserver
+
+Now, open your browser and navigate to 
+``http://localhost:5000/views/generic-view/4``. You should see the dummy
+image now. See ``views.py`` for other URLs to play with.
