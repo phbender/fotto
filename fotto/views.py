@@ -5,26 +5,36 @@ from flask import render_template, jsonify
 from flask.views import MethodView
 from flask.helpers import NotFound, send_file
 
+from mongoengine import ValidationError
+
 def json_response(json_string):
     """Use this method if JSON is already serialized (and no longer a dict)"""
     return app.response_class(json_string, mimetype='application/json')
 
-def collection_by_id(collection_id):
-    collection = Collection.objects(Q(slug=collection_id) | Q(id=collection_id)).first_or_404()
+def collection_by(selector, identifier):
+    if selector == "id":
+        return Collection.objects(id=identifier).first_or_404()
+    elif selector == "name":
+        return Collection.objects(Q(slug=identifier) & Q(public=True)).first_or_404()
+    else:
+        raise NotFound
+
+def collection_by_slug(slug):
+    collection = Collection.objects(slug=slug).first_or_404()
     return collection
 
 @app.route('/')
 def index():
     return "Hello, fotto!"
 
-@app.route('/collection/<collection_id>/')
-def collection(collection_id):
-    coll = collection_by_id(collection_id)
-    return json_response(coll.to_json())
+@app.route('/collection/<selector>/<collection_id>/')
+def collection(selector, collection_id):
+    coll = collection_by(selector, collection_id)
+    return render_template("collection_view.html", collection=coll)
 
-@app.route('/collection/<collection_id>/<int:seq_num>')
-def view_image(collection_id, seq_num):
-    coll = collection_by_id(collection_id)
+@app.route('/collection/<selector>/<collection_id>/<int:seq_num>')
+def view_image(selector, collection_id, seq_num):
+    coll = collection_by(selector, collection_id)
     try:
         the_image = coll.images[seq_num]
         return send_file(the_image.image_data, mimetype=the_image.image_data.content_type)

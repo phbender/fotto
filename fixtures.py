@@ -29,3 +29,9 @@ for n in sys.argv[1:]:
 
 v.save()
 
+tag_coll = TagCollection(owner=me, name="Ostsee", slug="ostsee")
+tag_coll.tags.append('ostsee')
+tag_coll.tags.append('ham')
+
+tag_coll.save()
+

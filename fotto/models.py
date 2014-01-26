@@ -2,6 +2,7 @@ from fotto import db, exif
 from mongoengine import signals
 import logging
 from StringIO import StringIO
+from flask import url_for
 
 Q = db.Q
 
@@ -43,9 +44,15 @@ class Collection(db.Document):
     name = db.StringField(required=True, max_length=60)
     slug = db.StringField(required=True, max_length=60)
     owner = db.ReferenceField(User, required=True)
+    public = db.BooleanField(default=False)
 
     def __unicode__(self):
         return self.name
+
+    @property
+    def image_urls(self):
+        for index, image in enumerate(self.images):
+            yield url_for('view_image', selector='id', seq_num=index, collection_id=self.id)
 
     meta = {'allow_inheritance' : True }
 
@@ -58,8 +65,9 @@ class TagCollection(Collection):
 
     @property
     def images(self):
-        return []
+        q_obj = Q()
+        for t in self.tags:
+            q_obj |= Q(tags=t)
 
-
-
+        return Image.objects(q_obj)
 
