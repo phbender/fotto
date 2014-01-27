@@ -5,8 +5,6 @@ from flask import render_template, jsonify
 from flask.views import MethodView
 from flask.helpers import NotFound, send_file
 
-from mongoengine import ValidationError
-
 def json_response(json_string):
     """Use this method if JSON is already serialized (and no longer a dict)"""
     return app.response_class(json_string, mimetype='application/json')
@@ -25,15 +23,16 @@ def collection_by_slug(slug):
 
 @app.route('/')
 def index():
-    return "Hello, fotto!"
+    return render_template('base.html')
 
 @app.route('/collection/<selector>/<collection_id>/')
 def collection(selector, collection_id):
     coll = collection_by(selector, collection_id)
     return render_template("collection_view.html", collection=coll)
 
+@app.route('/collection/<selector>/<collection_id>/<int:seq_num>/<size>')
 @app.route('/collection/<selector>/<collection_id>/<int:seq_num>')
-def view_image(selector, collection_id, seq_num):
+def view_image(selector, collection_id, seq_num, size=None):
     coll = collection_by(selector, collection_id)
     try:
         the_image = coll.images[seq_num]

@@ -8,4 +8,8 @@ db = MongoEngine(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-from fotto import views, models
+from exif import exifdata as exifdata
+from exif import imageinfo as imageinfo
+
+from fotto.models import *
+from fotto.views import *

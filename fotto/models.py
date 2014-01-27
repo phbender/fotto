@@ -1,4 +1,5 @@
-from fotto import db, exif
+from fotto import db, exifdata, imageinfo
+from fotto import thumbnail
 from mongoengine import signals
 import logging
 from StringIO import StringIO
@@ -13,6 +14,16 @@ class User(db.Document):
     def __unicode__(self):
         return "%s <%s>" % (self.name, self.email)
 
+class ImageVersion(db.Document):
+    version_hash = db.StringField(required=True, max_length=100)
+    image_data = db.FileField(required=True)
+
+    @classmethod
+    def pre_delete(cls, sender, document, **kwargs):
+        document.image_data.delete()
+
+signals.pre_delete.connect(ImageVersion.pre_delete, sender=ImageVersion)
+
 class Image(db.Document):
     owner = db.ReferenceField(User, required=True)
     tags = db.ListField(db.StringField(max_length=50))
@@ -20,16 +31,22 @@ class Image(db.Document):
     name = db.StringField(max_length=60)
     image_data = db.FileField(required=True)
 
+    versions = db.ReferenceField(ImageVersion, reverse_delete_rule=db.CASCADE)
+
+    def set_image(self, fh):
+        info = imageinfo(fh)
+        self.image_data.put(fh, **info)
+
     @classmethod
     def pre_save(cls, sender, document, **kwargs):
         pass
+
 
     @classmethod
     def pre_delete(cls, sender, document, **kwargs):
         """Important: clean up image data"""
         logging.debug("deleting %s" % document)
         document.image_data.delete()
-
 
     def __unicode__(self):
         if self.name:

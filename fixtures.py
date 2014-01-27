@@ -18,7 +18,7 @@ for n in sys.argv[1:]:
     f.seek(0)
     tags = [i.strip() for i in ed["Subject"].split(',')]
     i = Image(name=ed["Title"], owner=me, caption=ed["Description"])
-    i.image_data.put(f, content_type="image/jpeg")
+    i.set_image(f)
     for t in tags:
         i.tags.append(t)
     i.save()
@@ -29,7 +29,7 @@ for n in sys.argv[1:]:
 
 v.save()
 
-tag_coll = TagCollection(owner=me, name="Ostsee", slug="ostsee")
+tag_coll = TagCollection(owner=me, name="Ostsee", slug="ostsee", public=True)
 tag_coll.tags.append('ostsee')
 tag_coll.tags.append('ham')
 
