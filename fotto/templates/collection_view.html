@@ -2,9 +2,11 @@
 
 {% block content %}
     <h2>Viewing collection "{{ collection.name }}"</h2>
-    <ul>
+    <div id="masonry_container">
         {% for url in collection.image_urls %}
-        <li><a href="{{ url }}">click me</a></li>
+        <div class="item w1"><img style="width:100%;" src="{{ url }}"></div>
+        <div class="item w2"><img style="width:100%;" src="{{ url }}"></div>
+        <div class="item w1"><img style="width:100%;" src="{{ url }}"></div>
         {% endfor %}
-    </ul>
+    </div>
 {% endblock %}
