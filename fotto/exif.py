@@ -3,6 +3,32 @@
 from subprocess import Popen, PIPE
 import StringIO
 
+def filehandle(image):
+    if isinstance(image, str):
+        fh = open(image, 'r')
+    else:
+        fh = image
+
+    return fh
+
+def imageinfo(image, identify='identify'):
+
+    fh = filehandle(image)
+
+    call = [identify, '-']
+    process = Popen(call, stdin=PIPE, stdout=PIPE)
+    out, err = process.communicate(fh.read())
+
+    fh.seek(0)
+
+    _fn, _fmt, _size, _, _, _, _, _, _ = out.strip().split()
+    _width, _height = map(float, _size.split('x'))
+
+    return dict(
+            format=_fmt,
+            size = (_width, _height)
+            )
+
 def exifdata(image, interesting = None, exiftool='exiftool'):
     """Uses 'exiftool' to access EXIF data. Returns (key, value) pairs.
     Optionally, you can pass a list of interesting keys, if so, only the relevant
@@ -10,15 +36,14 @@ def exifdata(image, interesting = None, exiftool='exiftool'):
     executable to call. 'image' can be either a file name or a file handle.
     """
 
-    if isinstance(image, str):
-        fh = open(image, 'r')
-    else:
-        fh = image
+    fh = filehandle(image)
 
     call = [exiftool, '-']
 
     process = Popen(call, stdin=PIPE, stdout=PIPE)
     out, err = process.communicate(fh.read())
+
+    fh.seek(0)
 
     res = {}
 
@@ -30,7 +55,6 @@ def exifdata(image, interesting = None, exiftool='exiftool'):
         if interesting is None or k in interesting:
             res[k] = v
     return res
-
 
 if __name__ == '__main__':
 
