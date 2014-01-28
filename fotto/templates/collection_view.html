@@ -4,9 +4,7 @@
     <h2>Viewing collection "{{ collection.name }}"</h2>
     <div id="masonry_container">
         {% for url in collection.image_urls %}
-        <div class="item w1"><img style="width:100%;" src="{{ url }}"></div>
-        <div class="item w2"><img style="width:100%;" src="{{ url }}"></div>
-        <div class="item w1"><img style="width:100%;" src="{{ url }}"></div>
+        <div class="item"><img class="resize" src="{{ url }}"/></div>
         {% endfor %}
     </div>
 {% endblock %}
