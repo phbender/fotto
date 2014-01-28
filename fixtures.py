@@ -10,7 +10,7 @@ Collection.objects.delete()
 me = User(name="Hui Booh", email="huibooh@castle.net")
 me.save()
 
-v = ListCollection(owner=me, name="A generic view", slug="generic-view")
+v = ListCollection(owner=me, name="A generic view", slug="generic-view", public=True)
 
 for n in sys.argv[1:]:
     f = open(n, 'r')
