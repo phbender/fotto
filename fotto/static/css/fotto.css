@@ -4,17 +4,33 @@
     top: 0px;
     left: 0px;
 }
+
+#lightbox
+{
+    display: none;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 1000;
+}
+
 .item
 {
     height: 200px;
-    position: absolute;
-    top: 0px;
-    left: 0px;
+    float: left;
+    border: 5px solid #aaaaaa;
+    padding: 5px;
 }
 
 img.resize
 {
     height: 100%;
+    width: auto%;
+}
+
+.centered
+{
+    height: auto;
     width: auto;
 }
 
