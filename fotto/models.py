@@ -2,10 +2,10 @@ from fotto import db, exifdata, imageinfo
 from fotto import thumbnail
 from mongoengine import signals
 import logging
-from StringIO import StringIO
 from flask import url_for
 
 Q = db.Q
+
 
 class User(db.Document):
     email = db.EmailField(unique=True, required=True)
@@ -13,6 +13,7 @@ class User(db.Document):
 
     def __unicode__(self):
         return "%s <%s>" % (self.name, self.email)
+
 
 class ImageVersion(db.Document):
     version_hash = db.StringField(required=True, max_length=100)
@@ -23,6 +24,7 @@ class ImageVersion(db.Document):
         document.image_data.delete()
 
 signals.pre_delete.connect(ImageVersion.pre_delete, sender=ImageVersion)
+
 
 class Image(db.Document):
     owner = db.ReferenceField(User, required=True)
@@ -41,7 +43,6 @@ class Image(db.Document):
     def pre_save(cls, sender, document, **kwargs):
         pass
 
-
     @classmethod
     def pre_delete(cls, sender, document, **kwargs):
         """Important: clean up image data"""
@@ -57,6 +58,7 @@ class Image(db.Document):
 signals.pre_delete.connect(Image.pre_delete, sender=Image)
 signals.pre_save.connect(Image.pre_save, sender=Image)
 
+
 class Collection(db.Document):
     name = db.StringField(required=True, max_length=60)
     slug = db.StringField(required=True, max_length=60)
@@ -67,14 +69,19 @@ class Collection(db.Document):
         return self.name
 
     @property
-    def image_urls(self):
+    def image_infos(self):
         for index, image in enumerate(self.images):
-            yield url_for('view_image', selector='id', seq_num=index, collection_id=self.id)
+            url = url_for('view_image', selector='id',
+                          seq_num=index, collection_id=self.id)
+            aspect = image.image_data.aspect_ratio
+            yield dict(url=url, aspect_ratio=aspect)
 
-    meta = {'allow_inheritance' : True }
+    meta = {'allow_inheritance': True}
+
 
 class ListCollection(Collection):
     images = db.ListField(db.ReferenceField(Image))
+
 
 class TagCollection(Collection):
 

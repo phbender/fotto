@@ -2,9 +2,12 @@
 
 {% block content %}
     <h2>Viewing collection "{{ collection.name }}"</h2>
+    <div id="lightbox">Here is what we call the »lightbox«</div>
     <div id="masonry_container">
-        {% for url in collection.image_urls %}
-        <div class="item"><img class="resize" src="{{ url }}"/></div>
+        {% for info in collection.image_infos %}
+        <div class="item" data-aspect="{{ info['aspect_ratio'] }}">
+            <img class="resize" src="{{ info['url'] }}"/>
+        </div>
         {% endfor %}
     </div>
 {% endblock %}

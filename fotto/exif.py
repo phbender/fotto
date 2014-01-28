@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from subprocess import Popen, PIPE
-import StringIO
+
 
 def filehandle(image):
     if isinstance(image, str):
@@ -10,6 +10,7 @@ def filehandle(image):
         fh = image
 
     return fh
+
 
 def imageinfo(image, identify='identify'):
 
@@ -25,11 +26,14 @@ def imageinfo(image, identify='identify'):
     _width, _height = map(float, _size.split('x'))
 
     return dict(
-            format=_fmt,
-            size = (_width, _height)
-            )
+        format=_fmt,
+        aspect_ratio=_width / _height,
+        mime_type="image/%s" % _fmt.lower(),
+        size=(_width, _height)
+    )
 
-def exifdata(image, interesting = None, exiftool='exiftool'):
+
+def exifdata(image, interesting=None, exiftool='exiftool'):
     """Uses 'exiftool' to access EXIF data. Returns (key, value) pairs.
     Optionally, you can pass a list of interesting keys, if so, only the relevant
     pairs are returned. The 'exiftool' parameter allows to specify a custom
@@ -57,8 +61,8 @@ def exifdata(image, interesting = None, exiftool='exiftool'):
     return res
 
 if __name__ == '__main__':
+    import sys
 
-    import sys, itertools
     img_a = open(sys.argv[1])
     img_b = sys.argv[1]
 
@@ -68,5 +72,3 @@ if __name__ == '__main__':
     t2 = exifdata(img_b, interest)
     for k, v in t1:
         print k, v
-
-
