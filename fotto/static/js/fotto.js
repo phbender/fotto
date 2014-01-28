@@ -141,15 +141,29 @@ var Bricking = function(container, item_selector)
     };
 };
 
+var lightbox = function(item, images)
+{
+    this.images = images;
+    this.container = item;
+
+    images.each(function(index, image)
+    {
+        $(image).clone().appendTo(this.container);
+        console.log(this);
+    }.bind(this));
+
+    $('img', this.container).css('position', 'absolute').css('top', 0).css('left', 0);
+};
+
 $(document).ready(function()
 {
     $elem = $('#lightbox');
 
-    $('.item').bind('click', function(event){
-        the_clone = $.clone(event.target)
-        console.log(the_clone)
-        $elem.children().remove();
-        $elem.append(the_clone);
+    //var lb = new lightbox($elem, $('#masonry_container img'));
+
+    $('.item img').bind('click', function(event){
+        src = $(this).attr("src");
+        $('img', $elem).attr("src", src);
         $elem.show();
     });
 
@@ -165,9 +179,8 @@ $(document).ready(function()
         brick_layout.layout();
 
         $(window).resize(function(){
-        //    console.log("resize");
+            console.log("resize");
             brick_layout.layout();
-            $('#lightbox').center();
         });
     });
 
