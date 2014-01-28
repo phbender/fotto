@@ -36,7 +36,7 @@ def view_image(selector, collection_id, seq_num, size=None):
     coll = collection_by(selector, collection_id)
     try:
         the_image = coll.images[seq_num]
-        return send_file(the_image.image_data, mimetype=the_image.image_data.content_type)
+        return send_file(the_image.image_data, mimetype='image/jpeg')
     except IndexError, TypeError:
         # seq_num is invalid somehow
         raise NotFound
