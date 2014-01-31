@@ -118,7 +118,7 @@ var Bricking = function(container, item_selector)
         this.items.css("position", "absolute");
         rows = []
 
-        target_width = this.container.innerWidth() * 0.8;
+        target_width = this.container.innerWidth();
         target_height  = 200;
 
         rows.push(new Row(target_width, target_height));
@@ -164,6 +164,41 @@ $(document).ready(function()
     $('.item img').bind('click', function(event){
         src = $(this).attr("src");
         $('img', $elem).attr("src", src);
+        var width = $('img', $elem).prop('naturalWidth');
+        var height = $('img', $elem).prop('naturalHeight');
+        ratio = width/height;
+
+        winheight = $(window).height();
+        winwidth = $(window).width();
+
+        maxwidth = 0.9 * winwidth;
+        maxheight = 0.9 * winheight;
+
+        maxwidth = Math.min(maxwidth, width);
+        maxheight = Math.min(maxheight, height);
+
+        ratio_window = maxwidth/maxheight;
+
+        if(ratio_window > ratio){
+            // need to set height of the image
+            $('img', $elem).css('height', maxheight).css('width', maxheight * ratio);
+            console.log("setting height", maxheight)
+        }
+        else{
+            $('img', $elem).css('width', maxwidth).css('height', maxwidth / ratio);
+            console.log("setting width", maxwidth)
+        }
+
+        console.log("new size:", $('img', $elem).width(), $('img', $elem).height());
+
+        // set img to window center
+        _top = 0.5 * (winheight - $('img', $elem).height());
+        _left = 0.5 * (winwidth - $('img', $elem).width());
+
+        console.log("top/left", _top, _left);
+
+        $('img', $elem).css('left', _left).css('top', _top);
+
         $elem.show();
     });
 
