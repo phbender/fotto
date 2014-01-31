@@ -17,7 +17,7 @@ for n in sys.argv[1:]:
     ed = exif.exifdata(f)
     f.seek(0)
     tags = [i.strip() for i in ed["Subject"].split(',')]
-    i = Image(name=ed["Title"], owner=me, caption=ed["Description"])
+    i = Image(name=ed.get("Title", "untitled"), owner=me, caption=ed.get("Description", "-"))
     i.set_image(f)
     for t in tags:
         i.tags.append(t)
